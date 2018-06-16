@@ -4,7 +4,8 @@ interface IInitialCitiesProps {
     initialCities: {[city:string]: number};
     cityProbabilities: {[city: string]: number};
     onCountChanged?: (city: string, count: number) => void;
-    onEpidemic?: (roundIndex: number) => void;
+    onEpidemic?: () => void;
+    onRestore?: () => void;
     onRoundCountChanged?: (roundIndex: number, city: string, count: number) => void;
     onCityAdd?: (city: string) => void;
     rounds: [{[city: string]: number}];
@@ -19,6 +20,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
         this.captureNewCityInputRef = this.captureNewCityInputRef.bind(this);
         this.onCityDecrement = this.onCityDecrement.bind(this);
         this.onEpidemic = this.onEpidemic.bind(this);
+        this.onRestore = this.onRestore.bind(this);
         this.onNewCityAdd = this.onNewCityAdd.bind(this);
     }
 
@@ -62,7 +64,8 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                         {
                             this.props.rounds.map((r, i) => (
                                 <td key={i}>
-                                    {i + 1 === this.props.rounds.length && <button className="btn btn-danger" onClick={this.onEpidemic}>Epidemic</button>}
+                                    {i === this.props.rounds.length - 2 && <button className="btn btn-warning" onClick={this.onRestore}>Restore</button>}
+                                    {i === this.props.rounds.length - 1 && <button className="btn btn-danger" onClick={this.onEpidemic}>Epidemic</button>}
                                 </td>
                             ))
                         }
@@ -115,16 +118,40 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
     private getRoundCols(city: string): JSX.Element[] {
         return this.props.rounds.map((round, i) => (
             <td key={i}>
-                {i + 1 === this.props.rounds.length && <button className="btn btn-sm btn-outline-primary" onClick={this.onRoundDecrement.bind(this, i, city)}>-</button>}
+                {
+                    i + 1 === this.props.rounds.length &&
+                    <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={this.onRoundDecrement.bind(this, i, city)}
+                        disabled={round[city] === 0}
+                    >
+                        -
+                    </button>
+                }
                 <span style={{margin: "0 5px 0 5px"}}>{round[city]}</span>
-                {i + 1 === this.props.rounds.length && <button className="btn btn-sm btn-outline-primary" onClick={this.onRoundIncrement.bind(this, i, city)}>+</button>}
+                {
+                    i + 1 === this.props.rounds.length &&
+                    <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={this.onRoundIncrement.bind(this, i, city)}
+                        disabled={this.props.cityProbabilities[city] <= 0}
+                    >
+                        +
+                    </button>
+                }
             </td>
         ));
     }
 
     private onEpidemic(): void {
         if (this.props.onEpidemic) {
-            this.props.onEpidemic(0);
+            this.props.onEpidemic();
+        }
+    }
+
+    private onRestore(): void {
+        if (this.props.onRestore) {
+            this.props.onRestore();
         }
     }
 }

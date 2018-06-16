@@ -54,7 +54,7 @@ class App extends React.Component<{}, IAppState> {
 
         // tslint:disable-next-line:forin
         for (const city in round) {
-            result[city] = round[city] / totalCount;
+            result[city] = totalCount === 0 ? 0 : round[city] / totalCount;
         }
 
         return result;
@@ -86,6 +86,7 @@ class App extends React.Component<{}, IAppState> {
         this.onEpidemic = this.onEpidemic.bind(this);
         this.onInitialCityCountChanged = this.onInitialCityCountChanged.bind(this);
         this.onInitialCityAdd = this.onInitialCityAdd.bind(this);
+        this.onRestore = this.onRestore.bind(this);
         this.onRoundCountChanged = this.onRoundCountChanged.bind(this);
     }
 
@@ -103,6 +104,7 @@ class App extends React.Component<{}, IAppState> {
                     onCountChanged={this.onInitialCityCountChanged}
                     onCityAdd={this.onInitialCityAdd}
                     onEpidemic={this.onEpidemic}
+                    onRestore={this.onRestore}
                     onRoundCountChanged={this.onRoundCountChanged}
                 />
             </div>
@@ -120,7 +122,6 @@ class App extends React.Component<{}, IAppState> {
         });
     }
 
-    // TODO: add on rounds
     private onInitialCityAdd(city: string): void {
         this.setState((prevState: IAppState, props: {}) => {
             if (prevState.initialCities[city]) {
@@ -130,8 +131,13 @@ class App extends React.Component<{}, IAppState> {
             const newInitialCities = Object.assign({}, prevState.initialCities);
             newInitialCities[city] = 0;
 
+            for (const round of prevState.rounds) {
+                round[city] = 0;
+            }
+
             return {
-                initialCities: newInitialCities
+                initialCities: newInitialCities,
+                rounds: prevState.rounds
             };
         });
     }
@@ -153,6 +159,16 @@ class App extends React.Component<{}, IAppState> {
             return {
                 rounds: prevState.rounds
             };
+        });
+    }
+
+    private onRestore(): void {
+        this.setState((prevState: IAppState, props: {}) => {
+            prevState.rounds.pop();
+
+            return {
+                rounds: prevState.rounds
+            }
         });
     }
 }
