@@ -60,11 +60,35 @@ class App extends React.Component<{}, IAppState> {
         return result;
     }
 
+    private static getInfectedCities(state: IAppState): {[city: string]: number} {
+        if (state.rounds.length <= 1) {
+            return state.initialCities;
+        }
+
+        const infectedCities = {};
+        state.rounds.forEach((r, i, a) => {
+            // We don't want to count the last round
+            if (i === a.length - 1) {
+                return;
+            }
+
+            for (const city in r) {
+                if (infectedCities[city]) {
+                    infectedCities[city] = Math.max(infectedCities[city], r[city]);
+                } else {
+                    infectedCities[city] = r[city];
+                }
+            }
+        });
+
+        return infectedCities;
+    }
+
     private static getCityProbabilities(state: IAppState): {[city: string]: number} {
         const roundIndex = state.rounds.length - 1;
         const currentRound = state.rounds[roundIndex];
-        const prevRound = state.rounds.length >= 2 ? state.rounds[roundIndex - 1] : state.initialCities;
-        const diff = App.getDifference(prevRound, currentRound);
+        const infectedCities = App.getInfectedCities(state);
+        const diff = App.getDifference(infectedCities, currentRound);
 
         const knownRemaining = App.getTotalCount(diff);
         if (knownRemaining <= 0) {
