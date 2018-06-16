@@ -18,6 +18,16 @@ const initialCities = {
 };
 
 class App extends React.Component<{}, IAppState> {
+    public static getTotalCount(round: {[city: string]: number}): number {
+        let count = 0;
+        // tslint:disable-next-line:forin
+        for (const city in round) {
+            count += round[city];
+        }
+
+        return count;
+    }
+
     private static getInitialRound(cities: {[city: string]: number}): {[city: string]: number} {
         const round: {[city: string]: number} = {};
         // tslint:disable-next-line:forin
@@ -38,18 +48,8 @@ class App extends React.Component<{}, IAppState> {
         return diff;
     }
 
-    private static getRemainingCount(round: {[city: string]: number}): number {
-        let count = 0;
-        // tslint:disable-next-line:forin
-        for (const city in round) {
-            count += round[city];
-        }
-
-        return count;
-    }
-
     private static getProbabilities(round: {[city: string]: number}): {[city: string]: number} {
-        const totalCount = App.getRemainingCount(round);
+        const totalCount = App.getTotalCount(round);
         const result = {};
 
         // tslint:disable-next-line:forin
@@ -66,7 +66,7 @@ class App extends React.Component<{}, IAppState> {
         const prevRound = state.rounds.length >= 2 ? state.rounds[roundIndex - 1] : state.initialCities;
         const diff = App.getDifference(prevRound, currentRound);
 
-        const knownRemaining = App.getRemainingCount(diff);
+        const knownRemaining = App.getTotalCount(diff);
         if (knownRemaining <= 0) {
             // Equal probability with initial count
             return App.getProbabilities(App.getDifference(state.initialCities, currentRound));

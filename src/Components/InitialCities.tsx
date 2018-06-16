@@ -1,4 +1,5 @@
 import * as React from 'react';
+import App from '../App';
 
 interface IInitialCitiesProps {
     initialCities: {[city:string]: number};
@@ -52,6 +53,15 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                             </tr>
                         ))
                     }
+                    <tr>
+                        <td>Total</td>
+                        <td>{App.getTotalCount(this.props.initialCities)}</td>
+                        {
+                            this.props.rounds.map((r, i) => (
+                                <td key={i}>{App.getTotalCount(r)}</td>
+                            ))
+                        }
+                    </tr>
                     <tr>
                         <td colSpan={2}>
                             <div className="input-group mb-3">
