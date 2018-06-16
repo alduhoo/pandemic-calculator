@@ -94,7 +94,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
     }
 
     private onNewCityAdd(): void {
-        if (this.props.onCityAdd) {
+        if (this.props.onCityAdd && this.isNewCityValid()) {
             this.props.onCityAdd(this.newCityInput.value);
         }
 
@@ -153,5 +153,9 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
         if (this.props.onRestore) {
             this.props.onRestore();
         }
+    }
+
+    private isNewCityValid(): boolean {
+        return this.newCityInput && this.newCityInput.value.trim().length > 0;
     }
 }
