@@ -35,6 +35,16 @@ export class CitySelector extends React.Component<ICitySelectorProps, {}> {
                             </tr>
                         ))
                     }
+                    <tr>
+                        <td>
+                            <button
+                                className="btn btn-block btn-info"
+                                onClick={this.onCitySelected.bind(this, undefined)}
+                            >
+                                Never mind...
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         );

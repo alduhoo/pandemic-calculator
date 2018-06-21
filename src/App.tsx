@@ -206,6 +206,12 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private onEpidemicCitySelected(city: string): void {
+        if (!city) {
+            return this.setState({
+                epidemic: false
+            });
+        }
+
         this.setState((prevState: IAppState, props: {}) => {
             prevState.rounds[prevState.rounds.length - 1][city]++;
             prevState.rounds.push(App.getInitialRound(prevState.initialCities));

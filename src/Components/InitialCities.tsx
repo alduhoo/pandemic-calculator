@@ -64,7 +64,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                     </tr>
                     <tr>
                         <td colSpan={2}>
-                            <div className="input-group mb-3">
+                            <div className="input-group">
                                 <input type="text" className="form-control" placeholder="New city" ref={this.captureNewCityInputRef} />
                                 <div className="input-group-append">
                                     <button className="btn btn-outline-light" onClick={this.onNewCityAdd}>Add</button>
