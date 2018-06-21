@@ -1,8 +1,8 @@
 import * as React from 'react';
 import App from '../App';
 
-interface IInitialCitiesProps {
-    initialCities: {[city:string]: number};
+interface IPandemicRoundsProps {
+    infectionDeck: {[city:string]: number};
     cityProbabilities: {[city: string]: number};
     onCountChanged?: (city: string, count: number) => void;
     onEpidemic?: () => void;
@@ -12,10 +12,10 @@ interface IInitialCitiesProps {
     rounds: [{[city: string]: number}];
 }
 
-export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
+export class PandemicRounds extends React.Component<IPandemicRoundsProps, {}> {
     private newCityInput: HTMLInputElement;
 
-    constructor(props: IInitialCitiesProps) {
+    constructor(props: IPandemicRoundsProps) {
         super(props);
 
         this.captureNewCityInputRef = this.captureNewCityInputRef.bind(this);
@@ -31,7 +31,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                 <thead>
                     <tr>
                         <th scope="col">City</th>
-                        <th scope="col">Initial Count</th>
+                        <th scope="col">Infection Deck</th>
                         {
                             this.props.rounds.map((r, i) => (
                                 <th key={i}>Round {i}</th>
@@ -41,12 +41,12 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                 </thead>
                 <tbody>
                     {
-                        Object.keys(this.props.initialCities).map(city => (
+                        Object.keys(this.props.infectionDeck).map(city => (
                             <tr key={city}>
                                 <td>{city} - {`${(this.props.cityProbabilities[city] * 100).toFixed(2)}%`}</td>
                                 <td>
                                     <button className="btn btn-sm btn-outline-primary" onClick={this.onCityDecrement.bind(this, city)}>-</button>
-                                    <span style={{margin: "0 5px 0 5px"}}>{this.props.initialCities[city]}</span>
+                                    <span style={{margin: "0 5px 0 5px"}}>{this.props.infectionDeck[city]}</span>
                                     <button className="btn btn-sm btn-outline-primary" onClick={this.onCityIncrement.bind(this, city)}>+</button>
                                 </td>
                                 {this.getRoundCols(city)}
@@ -55,7 +55,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
                     }
                     <tr>
                         <td>Total</td>
-                        <td>{App.getTotalCount(this.props.initialCities)}</td>
+                        <td>{App.getTotalCount(this.props.infectionDeck)}</td>
                         {
                             this.props.rounds.map((r, i) => (
                                 <td key={i}>{App.getTotalCount(r)}</td>
@@ -95,7 +95,7 @@ export class InitialCities extends React.Component<IInitialCitiesProps, {}> {
 
     private onCountChanged(city: string, value: number): void {
         if (this.props.onCountChanged) {
-            this.props.onCountChanged(city, this.props.initialCities[city] + value);
+            this.props.onCountChanged(city, this.props.infectionDeck[city] + value);
         }
     }
 

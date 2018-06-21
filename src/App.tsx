@@ -4,11 +4,11 @@ import './App.css';
 import logo from './logo.svg';
 
 import { CitySelector } from './Components/CitySelector';
-import { InitialCities } from './Components/InitialCities';
+import { PandemicRounds } from './Components/PandemicRounds';
 
 interface IAppState {
     epidemic: boolean;
-    initialCities: {[city: string]: number};
+    infectionDeck: {[city: string]: number};
     rounds: [{[city: string]: number}];
 }
 
@@ -64,7 +64,7 @@ class App extends React.Component<{}, IAppState> {
 
     private static getInfectedCities(state: IAppState): {[city: string]: number} {
         if (state.rounds.length <= 1) {
-            return state.initialCities;
+            return state.infectionDeck;
         }
 
         const infectedCities = {};
@@ -95,7 +95,7 @@ class App extends React.Component<{}, IAppState> {
         const knownRemaining = App.getTotalCount(diff);
         if (knownRemaining <= 0) {
             // Equal probability with initial count
-            return App.getProbabilities(App.getDifference(state.initialCities, currentRound));
+            return App.getProbabilities(App.getDifference(state.infectionDeck, currentRound));
         } else {
             return App.getProbabilities(diff);
         }
@@ -106,14 +106,14 @@ class App extends React.Component<{}, IAppState> {
 
         this.state = {
             epidemic: false,
-            initialCities,
+            infectionDeck: initialCities,
             rounds: [App.getInitialRound(initialCities)]
         };
 
         this.onEpidemic = this.onEpidemic.bind(this);
         this.onEpidemicCitySelected = this.onEpidemicCitySelected.bind(this);
-        this.onInitialCityCountChanged = this.onInitialCityCountChanged.bind(this);
-        this.onInitialCityAdd = this.onInitialCityAdd.bind(this);
+        this.onInfectionDeckCountChanged = this.onInfectionDeckCountChanged.bind(this);
+        this.onInfectionCityAdd = this.onInfectionCityAdd.bind(this);
         this.onRestore = this.onRestore.bind(this);
         this.onRoundCountChanged = this.onRoundCountChanged.bind(this);
     }
@@ -128,17 +128,17 @@ class App extends React.Component<{}, IAppState> {
                 {
                     this.state.epidemic ?
                         <CitySelector
-                            cities={Object.keys(this.state.initialCities)}
-                            cityProbabilities={App.getProbabilities(App.getDifference(this.state.initialCities, this.currentRound()))}
+                            cities={Object.keys(this.state.infectionDeck)}
+                            cityProbabilities={App.getProbabilities(App.getDifference(this.state.infectionDeck, this.currentRound()))}
                             onCitySelected={this.onEpidemicCitySelected}
                         />
                     :
-                        <InitialCities
-                            initialCities={this.state.initialCities}
+                        <PandemicRounds
+                            infectionDeck={this.state.infectionDeck}
                             cityProbabilities={App.getCityProbabilities(this.state)}
                             rounds={this.state.rounds}
-                            onCountChanged={this.onInitialCityCountChanged}
-                            onCityAdd={this.onInitialCityAdd}
+                            onCountChanged={this.onInfectionDeckCountChanged}
+                            onCityAdd={this.onInfectionCityAdd}
                             onEpidemic={this.onEpidemic}
                             onRestore={this.onRestore}
                             onRoundCountChanged={this.onRoundCountChanged}
@@ -148,32 +148,32 @@ class App extends React.Component<{}, IAppState> {
         );
     }
 
-    private onInitialCityCountChanged(city: string, count: number): void {
+    private onInfectionDeckCountChanged(city: string, count: number): void {
         this.setState((prevState: IAppState, props: {}) => {
-            const newInitialCities = Object.assign({}, prevState.initialCities);
-            newInitialCities[city] = count;
+            const newInfectionDeck = Object.assign({}, prevState.infectionDeck);
+            newInfectionDeck[city] = count;
 
             return {
-                initialCities: newInitialCities
+                infectionDeck: newInfectionDeck
             };
         });
     }
 
-    private onInitialCityAdd(city: string): void {
+    private onInfectionCityAdd(city: string): void {
         this.setState((prevState: IAppState, props: {}) => {
-            if (prevState.initialCities[city]) {
+            if (prevState.infectionDeck[city]) {
                 return prevState;
             }
 
-            const newInitialCities = Object.assign({}, prevState.initialCities);
-            newInitialCities[city] = 0;
+            const newInfectionDeck = Object.assign({}, prevState.infectionDeck);
+            newInfectionDeck[city] = 0;
 
             for (const round of prevState.rounds) {
                 round[city] = 0;
             }
 
             return {
-                initialCities: newInitialCities,
+                infectionDeck: newInfectionDeck,
                 rounds: prevState.rounds
             };
         });
@@ -214,7 +214,7 @@ class App extends React.Component<{}, IAppState> {
 
         this.setState((prevState: IAppState, props: {}) => {
             prevState.rounds[prevState.rounds.length - 1][city]++;
-            prevState.rounds.push(App.getInitialRound(prevState.initialCities));
+            prevState.rounds.push(App.getInitialRound(prevState.infectionDeck));
 
             return {
                 epidemic: false,
