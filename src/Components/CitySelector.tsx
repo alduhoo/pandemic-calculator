@@ -2,6 +2,7 @@ import * as React from 'react';
 
 export interface ICitySelectorProps {
     cities: string[];
+    cityProbabilities: {[city: string]: number};
     onCitySelected?: (city: string) => void;
 }
 
@@ -25,6 +26,7 @@ export class CitySelector extends React.Component<ICitySelectorProps, {}> {
                                 <td>
                                     <button
                                         className="btn btn-block btn-danger"
+                                        disabled={this.props.cityProbabilities[c] === 0}
                                         onClick={this.onCitySelected.bind(this, c)}
                                     >
                                         {c}

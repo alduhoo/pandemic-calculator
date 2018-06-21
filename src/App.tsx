@@ -129,6 +129,7 @@ class App extends React.Component<{}, IAppState> {
                     this.state.epidemic ?
                         <CitySelector
                             cities={Object.keys(this.state.initialCities)}
+                            cityProbabilities={App.getProbabilities(App.getDifference(this.state.initialCities, this.currentRound()))}
                             onCitySelected={this.onEpidemicCitySelected}
                         />
                     :
@@ -214,6 +215,10 @@ class App extends React.Component<{}, IAppState> {
                 rounds: prevState.rounds
             };
         });
+    }
+
+    private currentRound(): {[city: string]: number} {
+        return this.state.rounds[this.state.rounds.length - 1];
     }
 }
 
