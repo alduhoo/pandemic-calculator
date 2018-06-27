@@ -13,9 +13,19 @@ interface IAppState {
 }
 
 const initialCities = {
-    'Atlanta': 2,
-    'Chicago': 1,
+    'Atlanta': 3,
+    'Buenos Aires': 2,
+    'Cairo': 3,
+    'Chicago': 2,
+    'Denver': 1,
+    'Istanbul': 3,
+    'Jacksonville': 3,
+    'Lagos': 3,
+    'London': 3,
     'New York': 3,
+    'Santiago': 3,
+    'São Paulo': 3,
+    'Tripoli': 3,
     'Washington': 3,
 };
 
